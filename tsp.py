@@ -1,6 +1,7 @@
 import csv
 import random
 import argparse
+import time
 from city import City
 from tour import Tour
 
@@ -105,7 +106,11 @@ tour = Tour(cities)
 answer = 'Y'
 while answer in ['Yes', 'yes', 'YES', 'y', 'Y']:
     tour.plot_cities()
+    begin = time.time()
     tour, iteration = tour_improve(tour, neighbors, verbose, depth)
+    end = time.time()
+    duration = end - begin
+    print "Iterations took ", duration, " seconds."
     tour.plot_paths(2 * len(tour), iteration, True, True)
     answer = raw_input("Try to improve this tour ? [Y/N] (default No) : ")
     if answer in ['Yes', 'yes', 'YES', 'y', 'Y']:
