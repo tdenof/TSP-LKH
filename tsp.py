@@ -5,7 +5,7 @@ from city import City
 from tour import Tour
 
 
-def tour_improve(tour, lk_verbose=False, lk_depth_limit=None):
+def tour_improve(tour, lk_max_search_roads, lk_verbose=False, lk_depth_limit=None):
 
     """ loop over roads ; convert tour to path
         and then start Lin-Kernighan-ish algorithm. """
@@ -21,7 +21,7 @@ def tour_improve(tour, lk_verbose=False, lk_depth_limit=None):
             tour.revert()
             tour.tour2path(road, backward)
             print "---- calling %i path_search on %s " % (i, str(tour))
-            tour2 = path_search(tour, [], [], lk_verbose, lk_depth_limit)
+            tour2 = path_search(tour, [], [], lk_max_search_roads, lk_verbose, lk_depth_limit)
             print "---- done path_search; found length=%f" % tour2.tour_length()
             if tour2.tour_length() < best_length:
                 best_length = tour2.tour_length()
@@ -33,13 +33,12 @@ def tour_improve(tour, lk_verbose=False, lk_depth_limit=None):
     return best_tour, best_iteration
 
 
-def path_search(path, added, deleted, lk_verbose=False, lk_depth_limit=None):
+def path_search(path, added, deleted, lk_max_search_roads, lk_verbose=False, lk_depth_limit=None):
     """ Recursive part of search for an improved TSP solution. """
-
     depth = len(added)  # also = len(deleted)
     (old_tour_length, old_cities) = (path.tour_length(), path.city_sequence())
     results = [(old_tour_length, old_cities)]
-    mods = path.find_lk_mods(added, deleted)
+    mods = path.find_lk_mods(lk_max_search_roads, added, deleted)
 
     if lk_verbose:
         print " " * depth + "  -- path_search " + \
@@ -63,7 +62,7 @@ def path_search(path, added, deleted, lk_verbose=False, lk_depth_limit=None):
         if lk_depth_limit and depth > lk_depth_limit:
             result_path = path
         else:
-            result_path = path_search(path, list(added), list(deleted), lk_verbose, lk_depth_limit)
+            result_path = path_search(path, list(added), list(deleted), lk_max_search_roads, lk_verbose, lk_depth_limit)
         results.append((result_path.tour_length(), result_path.city_sequence()))
 
         if lk_verbose:
@@ -79,7 +78,7 @@ def path_search(path, added, deleted, lk_verbose=False, lk_depth_limit=None):
     (best_length, best_city_seq) = min(results)
     return Tour(best_city_seq)
 
-parser = argparse.ArgumentParser(description='Lin Keringhan Algorithm.')
+parser = argparse.ArgumentParser(description='Lin Kernighan Algorithm.')
 parser.add_argument('-n', '--neighbors', type=int, default='3',
                     help='Neighbors count to test for new roads, default 3.')
 parser.add_argument('-f', '--file', default='dataset.csv',
@@ -101,11 +100,15 @@ with open(dsfile) as datasetFile:
     for row in dataset:
         cities.append(City(row[0], int(row[1]), int(row[2])))
 random.shuffle(cities)
-Tour.init_roads(cities, neighbors)
+Tour.init_roads(cities)
 tour = Tour(cities)
 answer = 'Y'
 while answer in ['Yes', 'yes', 'YES', 'y', 'Y']:
     tour.plot_cities()
-    tour, iteration = tour_improve(tour, verbose, depth)
+    tour, iteration = tour_improve(tour, neighbors, verbose, depth)
     tour.plot_paths(2 * len(tour), iteration, True, True)
     answer = raw_input("Try to improve this tour ? [Y/N] (default No) : ")
+    if answer in ['Yes', 'yes', 'YES', 'y', 'Y']:
+        neighbors_in = raw_input("Set a new value for neighbors count (default = actual = " + str(neighbors) + ') : ')
+        if neighbors_in:
+            neighbors = int(neighbors_in)

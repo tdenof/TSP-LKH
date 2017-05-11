@@ -7,7 +7,6 @@ from matplotlib import pyplot as plt
 class Tour(set):
 
     roads = Roads()
-    max_search_roads = 3
 
     # This is the heart of the data structure for the Lin-Kernighan algorithm.
     #
@@ -56,12 +55,11 @@ class Tour(set):
     # within the M'th shortest (e.g. the shortest 5) from a city.
 
     @staticmethod
-    def init_roads(cities, max_search_roads=3):
+    def init_roads(cities):
         """
         construct all possible roads from cities list.
         The loop is like constructing a strictly upper matrix.
         """
-        Tour.max_search_roads = max_search_roads
         for index1, city1 in enumerate(cities):
             for index2, city2 in enumerate(cities[index1+1:]):
                 road = Road(city1, city2)
@@ -95,7 +93,7 @@ class Tour(set):
             keeping the city sequence generated from the LK modifications. """
         self.__init__(self.city_sequence())
 
-    def find_lk_mods(self, added=None, deleted=None):
+    def find_lk_mods(self, max_search_roads, added=None, deleted=None):
         """ Return viable L.K. modifications as described in the ascii art above,
             stored as a list of (city_insert, road_to_add, road_to_delete), where
               1. road_to_add is city N to city i
@@ -120,7 +118,7 @@ class Tour(set):
         mods = []
         cityN = self.last
         # Of roads from cityN, look at the at shortest, most likely roads first.
-        for road_add in cityN.roads.get_by_length(Tour.max_search_roads):  # 1
+        for road_add in cityN.roads.get_by_length(max_search_roads):  # 1
             city_insert = road_add.other(cityN)
             if city_insert == self.prev_city(cityN): continue  # 2
             road_delete = Tour.get_road(city_insert, self.next_city(city_insert))  # 3
