@@ -1,5 +1,5 @@
 # TSP-LKH
-Solve the travel salesman problem using Lin Keringham algorithm.
+Solve the travel salesman problem using Lin Kernighan algorithm.
 
 The code is originally taken from Marlboro's College Python programming course.  
 http://cs.marlboro.edu/courses/fall2012/python/notes/Nov_27.attachments/traveling_salesman  
@@ -13,7 +13,7 @@ The code is compatible with ***Python 2.7***.
 ```
 usage: tsp.py [-h] [-n NEIGHBORS] [-f FILE] [-d DEPTH] [-v]
 
-Lin Keringhan Algorithm.
+Lin Kernighan Algorithm.
 
 optional arguments:
   -h, --help            show this help message and exit
