@@ -277,7 +277,7 @@ class Tour(set):
 
         plt.plot(x, y, 'co')
 
-    def plot_paths(self, iteration, best_iteration, block=False):
+    def plot_paths(self, iteration, best_iteration, block=False, end=False):
         """Plot paths between cities plotted previously
         """
         cities = self.city_sequence()
@@ -292,9 +292,12 @@ class Tour(set):
         plt.suptitle('Actual iteration : ' + str(iteration) + '/' + str(2*len(self)) +
                      '\n Best tour found on iteration : '
                      + str(best_iteration) + ', Tour length : ' + str(self.tour_length()), fontsize=12)
+        ax = plt.gca()
+        if end:
+            plt.text(0.5, -0.1, 'Finished, Close this window to stop the program.', horizontalalignment='center',
+                     verticalalignment='center', transform=ax.transAxes, color='green', weight='bold')
         plt.show(block)
         plt.pause(0.1)
-        ax = plt.gca()
         del ax.artists[:]
 
     def __str__(self):

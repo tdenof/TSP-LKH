@@ -107,5 +107,5 @@ answer = 'Y'
 while answer in ['Yes', 'yes', 'YES', 'y', 'Y']:
     tour.plot_cities()
     tour, iteration = tour_improve(tour, verbose, depth)
-    tour.plot_paths(2 * len(tour), iteration, True)
+    tour.plot_paths(2 * len(tour), iteration, True, True)
     answer = raw_input("Try to improve this tour ? [Y/N] (default No) : ")
