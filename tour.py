@@ -1,3 +1,4 @@
+import warnings
 from roads import Roads
 from road import Road
 from matplotlib import pyplot as plt
@@ -276,6 +277,9 @@ class Tour(set):
             plt.annotate(city.name, xy=(city.x, city.y), xytext=(5, 5), textcoords='offset points')
 
         plt.plot(x, y, 'co')
+
+        # Ignore matplotlib warnings related to GUI
+        warnings.filterwarnings("ignore", ".*GUI.*")
 
     def plot_paths(self, iteration, best_iteration, block=False, end=False):
         """Plot paths between cities plotted previously
